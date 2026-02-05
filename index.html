@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Resume Analyzer</title>
+  <link rel="stylesheet" href="index.css" />
+</head>
+
+<body class="dark">
+
+<button id="themeToggle" class="theme-toggle">🌙</button>
+
+<div class="container">
+  <h1>Smart Resume Analyzer</h1>
+  <p class="subtitle">Upload your resume and match it with a job description</p>
+
+  <!-- Resume Upload -->
+  <div id="dropZone" class="upload-box">
+    <input type="file" id="fileInput" class="file-input" accept=".pdf,.doc,.docx" hidden />
+    <p>Click or drop your resume here</p>
+    <span id="fileName" class="file-name hidden"></span>
+  </div>
+
+  <!-- Job Description -->
+  <textarea
+    class="jd-textarea"
+    placeholder="Paste job description here..."
+  ></textarea>
+
+  <button class="analyze-btn">Analyze Resume</button>
+
+  <!-- 🔄 Loading UI -->
+  <div id="spinner" class="spinner hidden"></div>
+  <p id="loadingText" class="loading-text hidden">
+    Analyzing resume… scanned files may take a few seconds ⏳
+  </p>
+
+  <!-- Results -->
+  <div class="results hidden">
+    <div class="score-card">
+      <svg class="progress-ring" width="140" height="140">
+        <circle class="bg" cx="70" cy="70" r="60"></circle>
+        <circle class="progress" cx="70" cy="70" r="60"></circle>
+      </svg>
+      <div class="score-text">
+        <div class="score-value">0%</div>
+        <div class="score-label">Match Score</div>
+      </div>
+    </div>
+
+    <div class="skills">
+      <div>
+        <h3>Matched Skills</h3>
+        <div class="skill-box matched-list"></div>
+      </div>
+      <div>
+        <h3>Missing Skills</h3>
+        <div class="skill-box missing-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="index.js"></script>
+</body>
+</html>
