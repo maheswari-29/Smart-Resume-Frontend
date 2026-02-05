@@ -1,41 +1,44 @@
-// DRAG & DROP
+// ========== ELEMENTS ==========
 const dropZone = document.getElementById("dropZone");
 const fileInput = document.getElementById("fileInput");
 const fileName = document.getElementById("fileName");
-
-dropZone.onclick = () => fileInput.click();
-
-fileInput.onchange = () => {
-  fileName.textContent = fileInput.files[0].name;
-  fileName.classList.remove("hidden");
-};
-
-dropZone.ondragover = (e) => {
-  e.preventDefault();
-};
-
-dropZone.ondrop = (e) => {
-  e.preventDefault();
-  fileInput.files = e.dataTransfer.files;
-  fileName.textContent = e.dataTransfer.files[0].name;
-  fileName.classList.remove("hidden");
-};
-
-// DARK MODE
 const toggle = document.getElementById("themeToggle");
-toggle.textContent = "☀️";
-
-toggle.onclick = () => {
-  document.body.classList.toggle("dark");
-  toggle.textContent =
-    document.body.classList.contains("dark") ? "☀️" : "🌙";
-};
-
+const analyzeBtn = document.querySelector(".analyze-btn");
 const BACKEND_URL = "https://smart-resume-analyzer-backend-1-ekre.onrender.com";
 
-const spinner = document.getElementById("spinner");
-const loadingText = document.getElementById("loadingText");
+// ========== DRAG & DROP / TOUCH ==========
+function updateFileDisplay(file) {
+  fileName.textContent = file.name;
+  fileName.classList.remove("hidden");
+}
 
+dropZone.addEventListener("click", () => fileInput.click());
+dropZone.addEventListener("dragover", (e) => e.preventDefault());
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  if (e.dataTransfer.files.length) {
+    fileInput.files = e.dataTransfer.files;
+    updateFileDisplay(e.dataTransfer.files[0]);
+  }
+});
+
+// Mobile touch support: tap to select
+dropZone.addEventListener("touchstart", () => fileInput.click());
+
+// File input change
+fileInput.addEventListener("change", () => {
+  if (fileInput.files.length) updateFileDisplay(fileInput.files[0]);
+});
+
+// ========== THEME TOGGLE ==========
+toggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+
+toggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  toggle.textContent = document.body.classList.contains("dark") ? "☀️" : "🌙";
+});
+
+// ========== SKILL RENDER ==========
 function renderSkills(container, skills) {
   container.innerHTML = "";
   if (!skills || skills.length === 0) {
@@ -49,19 +52,19 @@ function renderSkills(container, skills) {
   });
 }
 
+// ========== SCORE ANIMATION ==========
 function animateScore(percent) {
   const circle = document.querySelector(".progress");
   const value = document.querySelector(".score-value");
   const radius = 60;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (percent / 100) * circumference;
-
   circle.style.strokeDashoffset = offset;
   value.textContent = percent + "%";
 }
 
-document.querySelector(".analyze-btn").onclick = async () => {
-  const btn = document.querySelector(".analyze-btn");
+// ========== ANALYZE BUTTON ==========
+analyzeBtn.addEventListener("click", async () => {
   const resume = fileInput.files[0];
   const jd = document.querySelector(".jd-textarea").value.trim();
 
@@ -70,10 +73,8 @@ document.querySelector(".analyze-btn").onclick = async () => {
     return;
   }
 
-  btn.disabled = true;
-  btn.textContent = "Analyzing...";
-  spinner.classList.remove("hidden");
-  loadingText.classList.remove("hidden");
+  analyzeBtn.disabled = true;
+  analyzeBtn.textContent = "Analyzing...";
 
   const formData = new FormData();
   formData.append("resume", resume);
@@ -85,6 +86,8 @@ document.querySelector(".analyze-btn").onclick = async () => {
       body: formData,
     });
 
+    if (!res.ok) throw new Error("Backend returned an error");
+
     const data = await res.json();
 
     animateScore(data.match_percentage);
@@ -92,12 +95,11 @@ document.querySelector(".analyze-btn").onclick = async () => {
     renderSkills(document.querySelector(".missing-list"), data.missing_skills);
 
     document.querySelector(".results").classList.remove("hidden");
-  } catch {
-    alert("Backend not reachable");
+  } catch (err) {
+    alert("Backend not reachable or error occurred");
+    console.error(err);
   } finally {
-    spinner.classList.add("hidden");
-    loadingText.classList.add("hidden");
-    btn.disabled = false;
-    btn.textContent = "Analyze Resume";
+    analyzeBtn.disabled = false;
+    analyzeBtn.textContent = "Analyze Resume";
   }
-};
+});
