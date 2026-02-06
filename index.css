@@ -123,14 +123,16 @@ h1 {
 }
 
 .progress-ring {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
+  width: 160px;
+  height: 160px;
 }
 
 .progress-ring circle {
   fill: none;
   stroke-width: 10;
+  cx: 80;
+  cy: 80;
+  r: 70;
 }
 
 .progress-ring .bg {
@@ -140,22 +142,19 @@ h1 {
 .progress-ring .progress {
   stroke: var(--accent);
   stroke-linecap: round;
-  stroke-dasharray: 377;
-  stroke-dashoffset: 377;
+  stroke-dasharray: 439.6;   /* 2π × 70 */
+  stroke-dashoffset: 439.6;
   transition: stroke-dashoffset 1s ease;
 }
 
 .score-text {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: var(--text);
+  text-align: center;
 }
 
 .score-value {
@@ -170,44 +169,19 @@ h1 {
   margin-top: 4px;
 }
 
-.skills {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-top: 30px;
-}
-
-.skill-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.skill-box span {
-  padding: 6px 12px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  font-size: 13px;
-  color: var(--text);
-}
-
-/* MOBILE RESPONSIVE */
+/* Mobile */
 @media (max-width: 600px) {
-  .skills {
-    grid-template-columns: 1fr;
+  .score-card {
+    width: 120px;
+    height: 120px;
   }
 
-  .score-card {
+  .progress-ring {
     width: 120px;
     height: 120px;
   }
 
   .score-value {
     font-size: 22px;
-  }
-
-  .score-label {
-    font-size: 12px;
   }
 }
